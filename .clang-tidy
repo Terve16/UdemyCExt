@@ -1,5 +1,5 @@
 ---
-Checks: 'clang-analyzer-*,-clang-analyzer-security*'
+Checks: 'clang-analyzer-*''
 WarningsAsErrors: '*'
 HeaderFilterRegex: '.*'
 AnalyzeTemporaryDtors: false
