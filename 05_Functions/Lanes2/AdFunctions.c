@@ -8,22 +8,22 @@ void print_scene(float speed_mps, uint32_t lane_idx)
 
     switch (lane_idx)
     {
-    case RIGHT_LANE:
+    case LANE_ASSOCIATION_TYPE_RIGHT:
     {
         printf("| | |v|");
         break;
     }
-    case CENTER_LANE:
+    case LANE_ASSOCIATION_TYPE_CENTER:
     {
         printf("| |v| |");
         break;
     }
-    case LEFT_LANE:
+    case LANE_ASSOCIATION_TYPE_LEFT:
     {
         printf("|v| | |");
         break;
     }
-    case UNKNOWN_LANE:
+    case LANE_ASSOCIATION_TYPE_NONE:
     default:
         printf("| | | |");
         break;

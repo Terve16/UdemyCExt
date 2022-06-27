@@ -36,7 +36,7 @@ void round_value(float *value, uint8_t num_digits)
 
 int main()
 {
-    float value = 2.0f;
+    float value = 3.0f;
 
     clamp_value(&value, -2.0f, 2.0f);
     printf("%f\n", value);

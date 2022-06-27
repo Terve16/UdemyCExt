@@ -3,10 +3,10 @@
 
 enum LaneAssociationType
 {
-    UNKNOWN_LANE = 0,
-    RIGHT_LANE = 1,
-    CENTER_LANE = 2,
-    LEFT_LANE = 3
+    LANE_ASSOCIATION_TYPE_NONE = 0,
+    LANE_ASSOCIATION_TYPE_RIGHT = 1,
+    LANE_ASSOCIATION_TYPE_CENTER = 2,
+    LANE_ASSOCIATION_TYPE_LEFT = 3
 };
 
 int main()
@@ -30,22 +30,22 @@ int main()
         printf("\n       L C R\n      ");
         switch (lane)
         {
-        case RIGHT_LANE:
+        case LANE_ASSOCIATION_TYPE_RIGHT:
         {
             printf("| | |v|");
             break;
         }
-        case CENTER_LANE:
+        case LANE_ASSOCIATION_TYPE_CENTER:
         {
             printf("| |v| |");
             break;
         }
-        case LEFT_LANE:
+        case LANE_ASSOCIATION_TYPE_LEFT:
         {
             printf("|v| | |");
             break;
         }
-        case UNKNOWN_LANE:
+        case LANE_ASSOCIATION_TYPE_NONE:
         default:
             break;
         }
