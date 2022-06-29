@@ -56,11 +56,35 @@ Vector *freeVector(Vector *vector)
     return NULL;
 }
 
+void setVectorValues(Vector *const vector, const size_t no_of_values, ...)
+{
+    if (vector == NULL || vector->data == NULL)
+        return;
+
+    va_list valist;
+
+    va_start(valist, no_of_values);
+
+    for (size_t i = 0u; i < vector->length; i++)
+    {
+        if (i < no_of_values)
+        {
+            vector->data[i] = (float)va_arg(valist, double);
+        }
+        else
+        {
+            vector->data[i] = 0.0f;
+        }
+    }
+
+    va_end(valist);
+}
+
 /**********************/
 /*  I/O FUNCTIONS     */
 /**********************/
 
-void printVector(const Vector *vector)
+void printVector(const Vector *const vector)
 {
     if (vector->data == NULL)
     {
@@ -81,7 +105,7 @@ void printVector(const Vector *vector)
 /*  MATH. FUNCTIONS   */
 /**********************/
 
-Vector *addVector(const Vector *vec1, const Vector *vec2)
+Vector *addVector(const Vector *const vec1, const Vector *const vec2)
 {
     if ((vec1 == NULL) || (vec2 == NULL) || (vec1->length != vec2->length))
     {
@@ -98,7 +122,7 @@ Vector *addVector(const Vector *vec1, const Vector *vec2)
     return result;
 }
 
-Vector *subVector(const Vector *vec1, const Vector *vec2)
+Vector *subVector(const Vector *const vec1, const Vector *const vec2)
 {
     if ((vec1 == NULL) || (vec2 == NULL) || (vec1->length != vec2->length))
     {
@@ -116,7 +140,7 @@ Vector *subVector(const Vector *vec1, const Vector *vec2)
     return result;
 }
 
-float multiplyVector(const Vector *vec1, const Vector *vec2)
+float multiplyVector(const Vector *const vec1, const Vector *const vec2)
 {
     if ((vec1 == NULL) || (vec2 == NULL) || (vec1->length != vec2->length))
     {
@@ -133,7 +157,7 @@ float multiplyVector(const Vector *vec1, const Vector *vec2)
     return result;
 }
 
-Vector *multiplyVectorByScalar(const Vector *vec, const float scalar)
+Vector *multiplyVectorByScalar(const Vector *const vec, const float scalar)
 {
     if (vec == NULL)
     {
@@ -150,7 +174,7 @@ Vector *multiplyVectorByScalar(const Vector *vec, const float scalar)
     return result;
 }
 
-Vector *divideVectorByScalar(const Vector *vec, const float scalar)
+Vector *divideVectorByScalar(const Vector *const vec, const float scalar)
 {
     if ((vec == NULL) || (scalar == 0.0f))
     {
@@ -167,7 +191,7 @@ Vector *divideVectorByScalar(const Vector *vec, const float scalar)
     return result;
 }
 
-float meanVector(const Vector *vector)
+float meanVector(const Vector *const vector)
 {
     float sum = 0.0f;
 
@@ -179,7 +203,7 @@ float meanVector(const Vector *vector)
     return (float)(sum) / (float)(vector->length);
 }
 
-float minVector(const Vector *vector)
+float minVector(const Vector *const vector)
 {
     if (vector->length == 0)
     {
@@ -199,7 +223,7 @@ float minVector(const Vector *vector)
     return current_min;
 }
 
-float maxVector(const Vector *vector)
+float maxVector(const Vector *const vector)
 {
     if (vector->length == 0)
     {
@@ -219,19 +243,19 @@ float maxVector(const Vector *vector)
     return current_max;
 }
 
-float vectorEuclidNorm(const Vector *vector)
+float vectorEuclidNorm(const Vector *const vector)
 {
-    if (vector == NULL || vector->data == NULL)
-        return 0.0f;
-
-    float result = 0.0f;
-
-    for (size_t i = 0u; i < vector->length; i++)
+    if (vector == NULL)
     {
-        result += powf(vector->data[i], 2.0f);
+        return 0.0f;
     }
 
-    result = sqrtf(result);
+    float sum = 0.0f;
 
-    return result;
+    for (size_t i = 0; i < vector->length; i++)
+    {
+        sum += powf(vector->data[i], 2.0f);
+    }
+
+    return sqrtf(sum);
 }

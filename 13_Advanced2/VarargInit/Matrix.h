@@ -31,6 +31,8 @@ Matrix *createMatrix(const size_t num_rows, const size_t num_cols, const float v
 
 Matrix *freeMatrix(Matrix *matrix);
 
+void setMatrixValues(Matrix *const matrix, const size_t no_of_values, ...);
+
 /**********************/
 /*  HELPER FUNCTIONS  */
 /**********************/
@@ -42,6 +44,8 @@ size_t matrixNumElements(const Matrix *matrix);
 bool matrixSameSize(const Matrix *matrix1, const Matrix *matrix2);
 
 bool matrixMultiplyPossible(const Matrix *matrix1, const Matrix *matrix2);
+
+bool matrixMultiplyByVectorPossible(const Matrix *matrix, const Vector *vector);
 
 /**********************/
 /*  I/O FUNCTIONS     */
@@ -70,8 +74,6 @@ Vector *maxMatrix(const Matrix *matrix, const Axis axis);
 Vector *meanMatrix(const Matrix *matrix, const Axis axis);
 
 Matrix *matrixTranspose(const Matrix *matrix);
-
-bool matrixMultiplyByVectorPossible(const Matrix *matrix, const Vector *vector);
 
 Vector *multiplyMatrixByVector(const Matrix *matrix, const Vector *vector);
 

@@ -14,29 +14,31 @@
 
 Matrix *createMatrix(const size_t num_rows, const size_t num_cols, const float value)
 {
+    if (num_rows == 0u || num_cols == 0u)
+        return NULL;
+
     Matrix *matrix = (Matrix *)malloc(sizeof(Matrix));
 
     if (matrix == NULL)
-    {
         return NULL;
-    }
 
-    float *data = (float *)malloc(num_rows * num_cols * sizeof(float));
+    size_t array_size = (num_cols * num_rows);
 
-    if (data == NULL)
+    matrix->data = (float *)malloc(array_size * sizeof(float));
+
+    if (matrix->data == NULL)
     {
         free(matrix);
         return NULL;
     }
 
-    for (size_t i = 0; i < num_rows * num_cols; i++)
-    {
-        data[i] = value;
-    }
-
-    matrix->data = data;
     matrix->num_cols = num_cols;
     matrix->num_rows = num_rows;
+
+    for (size_t i = 0u; i < array_size; i++)
+    {
+        matrix->data[i] = value;
+    }
 
     return matrix;
 }
@@ -44,9 +46,7 @@ Matrix *createMatrix(const size_t num_rows, const size_t num_cols, const float v
 Matrix *freeMatrix(Matrix *matrix)
 {
     if (matrix == NULL)
-    {
         return NULL;
-    }
 
     if (matrix->data != NULL)
     {
@@ -64,21 +64,33 @@ Matrix *freeMatrix(Matrix *matrix)
 
 size_t matrixIndex(const size_t num_cols, const size_t i, const size_t j)
 {
-    return i * num_cols + j;
+    if (num_cols == 0u)
+        return 0u;
+
+    return ((i * num_cols) + j);
 }
 
 size_t matrixNumElements(const Matrix *matrix)
 {
-    return matrix->num_cols * matrix->num_rows;
+    if (matrix == NULL || matrix->data == NULL)
+        return 0u;
+
+    return (matrix->num_cols * matrix->num_rows);
 }
 
 bool matrixSameSize(const Matrix *matrix1, const Matrix *matrix2)
 {
-    return ((matrix1->num_rows == matrix2->num_rows) && (matrix1->num_cols == matrix2->num_cols));
+    if (matrix1 == NULL || matrix1->data == NULL || matrix2 == NULL || matrix2->data == NULL)
+        return false;
+
+    return (matrixNumElements(matrix1) == matrixNumElements(matrix2));
 }
 
 bool matrixMultiplyPossible(const Matrix *matrix1, const Matrix *matrix2)
 {
+    if (matrix1 == NULL || matrix1->data == NULL || matrix2 == NULL || matrix2->data == NULL)
+        return false;
+
     return (matrix1->num_cols == matrix2->num_rows);
 }
 
@@ -88,67 +100,59 @@ bool matrixMultiplyPossible(const Matrix *matrix1, const Matrix *matrix2)
 
 void printMatrix(const Matrix *matrix)
 {
-    printf("[");
+    if (matrix == NULL || matrix->data == NULL)
+        return;
 
-    for (size_t i = 0; i < matrix->num_rows; i++)
+    printf("\n[");
+
+    for (size_t i = 0u; i < matrix->num_rows; i++)
     {
-        if (i == 0)
-        {
-            printf("[");
-        }
-        else
-        {
-            printf(" [");
-        }
 
-        for (size_t j = 0; j < matrix->num_cols - 1; j++)
-        {
-            const size_t idx = matrixIndex(matrix->num_cols, i, j);
+        printf("[");
 
-            printf("%f, ", matrix->data[idx]);
-        }
-
-        const size_t idx = matrixIndex(matrix->num_cols, i, matrix->num_cols - 1);
-
-        if (i < (matrix->num_rows - 1))
+        for (size_t j = 0u; j < matrix->num_cols; j++)
         {
-            printf("%f]\n", matrix->data[idx]);
-        }
-        else
-        {
+            size_t idx = matrixIndex(matrix->num_cols, i, j);
+
             printf("%f", matrix->data[idx]);
+
+            if (j < (matrix->num_cols - 1u))
+            {
+                printf(", ");
+            }
+        }
+
+        printf("]");
+
+        if (i < (matrix->num_rows - 1u))
+        {
+            printf("\n");
         }
     }
 
-    printf("]]\n\n");
+    printf("]\n\n");
 }
 
 /**********************/
-/*  MATH. FUNCTIONS   */
+/*  MATH FUNCTIONS    */
 /**********************/
 
 Matrix *addMatrix(const Matrix *matrix1, const Matrix *matrix2)
 {
-    if (matrix1 == NULL || matrix2 == NULL || !matrixSameSize(matrix1, matrix2))
-    {
+    if (matrix1 == NULL || matrix1->data == NULL || matrix2 == NULL || matrix2->data == NULL)
         return NULL;
-    }
+
+    if (!matrixSameSize(matrix1, matrix2))
+        return NULL;
 
     Matrix *result = createMatrix(matrix1->num_rows, matrix1->num_cols, 0.0f);
 
     if (result == NULL)
-    {
         return NULL;
-    }
 
-    for (size_t i = 0; i < matrix1->num_rows; i++)
+    for (size_t i = 0u; i < matrixNumElements(matrix1); i++)
     {
-        for (size_t j = 0; j < matrix1->num_cols; j++)
-        {
-            const size_t idx = matrixIndex(matrix1->num_cols, i, j);
-
-            result->data[idx] = matrix1->data[idx] + matrix2->data[idx];
-        }
+        result->data[i] = (matrix1->data[i] + matrix2->data[i]);
     }
 
     return result;
@@ -156,26 +160,20 @@ Matrix *addMatrix(const Matrix *matrix1, const Matrix *matrix2)
 
 Matrix *subMatrix(const Matrix *matrix1, const Matrix *matrix2)
 {
-    if (matrix1 == NULL || matrix2 == NULL || !matrixSameSize(matrix1, matrix2))
-    {
+    if (matrix1 == NULL || matrix1->data == NULL || matrix2 == NULL || matrix2->data == NULL)
         return NULL;
-    }
+
+    if (!matrixSameSize(matrix1, matrix2))
+        return NULL;
 
     Matrix *result = createMatrix(matrix1->num_rows, matrix1->num_cols, 0.0f);
 
     if (result == NULL)
-    {
         return NULL;
-    }
 
-    for (size_t i = 0; i < matrix1->num_rows; i++)
+    for (size_t i = 0u; i < matrixNumElements(matrix1); i++)
     {
-        for (size_t j = 0; j < matrix1->num_cols; j++)
-        {
-            const size_t idx = matrixIndex(matrix1->num_cols, i, j);
-
-            result->data[idx] = matrix1->data[idx] - matrix2->data[idx];
-        }
+        result->data[i] = (matrix1->data[i] - matrix2->data[i]);
     }
 
     return result;
@@ -183,32 +181,29 @@ Matrix *subMatrix(const Matrix *matrix1, const Matrix *matrix2)
 
 Matrix *multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2)
 {
-    if (matrix1 == NULL || matrix2 == NULL || !matrixMultiplyPossible(matrix1, matrix2))
-    {
+    if (matrix1 == NULL || matrix1->data == NULL || matrix2 == NULL || matrix2->data == NULL)
         return NULL;
-    }
 
-    Matrix *result = createMatrix(matrix1->num_rows, matrix1->num_cols, 0.0f);
+    if (!matrixMultiplyPossible(matrix1, matrix2))
+        return NULL;
+
+    Matrix *result = createMatrix(matrix1->num_rows, matrix2->num_cols, 0.0f);
 
     if (result == NULL)
-    {
         return NULL;
-    }
 
-    for (size_t i = 0; i != matrix1->num_rows; i++)
+    for (size_t i = 0u; i < result->num_rows; i++)
     {
-        for (size_t j = 0; j != matrix2->num_cols; j++)
+        for (size_t j = 0u; j < result->num_cols; j++)
         {
-            size_t idx_ij = matrixIndex(matrix2->num_cols, i, j);
-            result->data[idx_ij] = 0.0f;
+            size_t idx_re = matrixIndex(result->num_cols, i, j);
 
-            for (size_t k = 0; k != matrix2->num_rows; k++)
+            for (size_t k = 0u; k < matrix1->num_cols; k++)
             {
-                size_t idx_ik = matrixIndex(matrix2->num_rows, i, k);
-                size_t idx_kj = matrixIndex(matrix2->num_cols, k, j);
+                size_t idx_m1 = matrixIndex(matrix1->num_cols, i, k);
+                size_t idx_m2 = matrixIndex(matrix2->num_cols, k, j);
 
-                result->data[idx_ij] =
-                    result->data[idx_ij] + matrix1->data[idx_ik] * matrix2->data[idx_kj];
+                result->data[idx_re] += (matrix1->data[idx_m1] * matrix2->data[idx_m2]);
             }
         }
     }
@@ -218,26 +213,17 @@ Matrix *multiplyMatrix(const Matrix *matrix1, const Matrix *matrix2)
 
 Matrix *multiplyMatrixByScalar(const Matrix *matrix, const float scalar)
 {
-    if (matrix == NULL)
-    {
+    if (matrix == NULL || matrix->data == NULL)
         return NULL;
-    }
 
     Matrix *result = createMatrix(matrix->num_rows, matrix->num_cols, 0.0f);
 
     if (result == NULL)
-    {
         return NULL;
-    }
 
-    for (size_t i = 0; i < matrix->num_rows; i++)
+    for (size_t i = 0u; i < matrixNumElements(matrix); i++)
     {
-        for (size_t j = 0; j < matrix->num_cols; j++)
-        {
-            const size_t idx = matrixIndex(matrix->num_cols, i, j);
-
-            result->data[idx] = matrix->data[idx] * scalar;
-        }
+        result->data[i] = (matrix->data[i] * scalar);
     }
 
     return result;
@@ -245,26 +231,17 @@ Matrix *multiplyMatrixByScalar(const Matrix *matrix, const float scalar)
 
 Matrix *divideMatrixByScalar(const Matrix *matrix, const float scalar)
 {
-    if (matrix == NULL || scalar == 0.0f)
-    {
+    if (matrix == NULL || matrix->data == NULL || scalar == 0.0f)
         return NULL;
-    }
 
     Matrix *result = createMatrix(matrix->num_rows, matrix->num_cols, 0.0f);
 
     if (result == NULL)
-    {
         return NULL;
-    }
 
-    for (size_t i = 0; i < matrix->num_rows; i++)
+    for (size_t i = 0u; i < matrixNumElements(matrix); i++)
     {
-        for (size_t j = 0; j < matrix->num_cols; j++)
-        {
-            const size_t idx = matrixIndex(matrix->num_cols, i, j);
-
-            result->data[idx] = matrix->data[idx] / scalar;
-        }
+        result->data[i] = (matrix->data[i] / scalar);
     }
 
     return result;
@@ -272,180 +249,202 @@ Matrix *divideMatrixByScalar(const Matrix *matrix, const float scalar)
 
 Vector *minMatrix(const Matrix *matrix, const Axis axis)
 {
-    if (matrix == NULL)
-    {
+    if (matrix == NULL || matrix->data == NULL)
         return NULL;
-    }
+
+    size_t size = 0u;
+    size_t max_idx = 0u;
 
     switch (axis)
     {
     case AXIS_0:
     {
-        Vector *result = createVector(matrix->num_cols, 0.0f);
-
-        for (size_t j = 0; j < matrix->num_cols; j++)
-        {
-            float current_min = FLT_MAX;
-
-            for (size_t i = 0; i < matrix->num_rows; i++)
-            {
-                const size_t idx = matrixIndex(matrix->num_cols, i, j);
-
-                if (matrix->data[idx] < current_min)
-                {
-                    current_min = matrix->data[idx];
-                }
-            }
-
-            result->data[j] = current_min;
-        }
-
-        return result;
+        size = matrix->num_cols;
+        max_idx = matrix->num_rows;
+        break;
     }
     case AXIS_1:
     {
-        Vector *result = createVector(matrix->num_rows, 0.0f);
-
-        for (size_t i = 0; i < matrix->num_rows; i++)
-        {
-            float current_min = FLT_MAX;
-
-            for (size_t j = 0; j < matrix->num_cols; j++)
-            {
-                const size_t idx = matrixIndex(matrix->num_cols, i, j);
-
-                if (matrix->data[idx] < current_min)
-                {
-                    current_min = matrix->data[idx];
-                }
-            }
-
-            result->data[i] = current_min;
-        }
-
-        return result;
+        size = matrix->num_rows;
+        max_idx = matrix->num_cols;
+        break;
     }
     default:
-    {
         return NULL;
+        break;
     }
+
+    Vector *result = createVector(size, 0.0f);
+
+    if (result == NULL)
+        return NULL;
+
+    for (size_t i = 0u; i < max_idx; i++)
+    {
+        for (size_t j = 0u; j < size; j++)
+        {
+            size_t idx = 0u;
+
+            switch (axis)
+            {
+            case AXIS_0:
+            {
+                idx = matrixIndex(matrix->num_cols, i, j);
+                break;
+            }
+            case AXIS_1:
+            {
+                idx = matrixIndex(matrix->num_cols, j, i);
+                break;
+            }
+            default:
+                break;
+            }
+
+            if (i == 0u)
+            {
+                result->data[j] = matrix->data[idx];
+            }
+            else if (result->data[j] > matrix->data[idx])
+            {
+                result->data[j] = matrix->data[idx];
+            }
+        }
     }
+
+    return result;
 }
 
 Vector *maxMatrix(const Matrix *matrix, const Axis axis)
 {
-    if (matrix == NULL)
-    {
+    if (matrix == NULL || matrix->data == NULL)
         return NULL;
-    }
+
+    size_t size = 0u;
+    size_t max_idx = 0u;
 
     switch (axis)
     {
     case AXIS_0:
     {
-        Vector *result = createVector(matrix->num_cols, 0.0f);
-
-        for (size_t j = 0; j < matrix->num_cols; j++)
-        {
-            float current_max = FLT_MIN;
-
-            for (size_t i = 0; i < matrix->num_rows; i++)
-            {
-                const size_t idx = matrixIndex(matrix->num_cols, i, j);
-
-                if (matrix->data[idx] > current_max)
-                {
-                    current_max = matrix->data[idx];
-                }
-            }
-
-            result->data[j] = current_max;
-        }
-
-        return result;
+        size = matrix->num_cols;
+        max_idx = matrix->num_rows;
+        break;
     }
     case AXIS_1:
     {
-        Vector *result = createVector(matrix->num_rows, 0.0f);
-
-        for (size_t i = 0; i < matrix->num_rows; i++)
-        {
-            float current_max = FLT_MIN;
-
-            for (size_t j = 0; j < matrix->num_cols; j++)
-            {
-                const size_t idx = matrixIndex(matrix->num_cols, i, j);
-
-                if (matrix->data[idx] > current_max)
-                {
-                    current_max = matrix->data[idx];
-                }
-            }
-
-            result->data[i] = current_max;
-        }
-
-        return result;
+        size = matrix->num_rows;
+        max_idx = matrix->num_cols;
+        break;
     }
     default:
-    {
         return NULL;
+        break;
     }
+
+    Vector *result = createVector(size, 0.0f);
+
+    if (result == NULL)
+        return NULL;
+
+    for (size_t i = 0u; i < max_idx; i++)
+    {
+        for (size_t j = 0u; j < size; j++)
+        {
+            size_t idx = 0u;
+
+            switch (axis)
+            {
+            case AXIS_0:
+            {
+                idx = matrixIndex(matrix->num_cols, i, j);
+                break;
+            }
+            case AXIS_1:
+            {
+                idx = matrixIndex(matrix->num_cols, j, i);
+                break;
+            }
+            default:
+                break;
+            }
+
+            if (i == 0u)
+            {
+                result->data[j] = matrix->data[idx];
+            }
+            else if (result->data[j] < matrix->data[idx])
+            {
+                result->data[j] = matrix->data[idx];
+            }
+        }
     }
+
+    return result;
 }
 
 Vector *meanMatrix(const Matrix *matrix, const Axis axis)
 {
-    if (matrix == NULL)
-    {
+    if (matrix == NULL || matrix->data == NULL)
         return NULL;
-    }
+
+    size_t size = 0u;
+    size_t max_idx = 0u;
 
     switch (axis)
     {
     case AXIS_0:
     {
-        Vector *result = createVector(matrix->num_cols, 0.0f);
-
-        for (size_t j = 0; j < matrix->num_cols; j++)
-        {
-            float sum = 0.0f;
-
-            for (size_t i = 0; i < matrix->num_rows; i++)
-            {
-                const size_t idx = matrixIndex(matrix->num_cols, i, j);
-
-                sum += matrix->data[idx];
-            }
-
-            result->data[j] = sum / (float)matrix->num_rows;
-        }
-
-        return result;
+        size = matrix->num_cols;
+        max_idx = matrix->num_rows;
+        break;
     }
     case AXIS_1:
     {
-        Vector *result = createVector(matrix->num_rows, 0.0f);
-
-        for (size_t i = 0; i < matrix->num_rows; i++)
-        {
-            float sum = 0.0f;
-
-            for (size_t j = 0; j < matrix->num_cols; j++)
-            {
-                const size_t idx = matrixIndex(matrix->num_cols, i, j);
-
-                sum += matrix->data[idx];
-            }
-
-            result->data[i] = sum / (float)matrix->num_cols;
-        }
-
-        return result;
+        size = matrix->num_rows;
+        max_idx = matrix->num_cols;
+        break;
     }
     default:
-    {
         return NULL;
+        break;
     }
+
+    Vector *result = createVector(size, 0.0f);
+
+    if (result == NULL)
+        return NULL;
+
+    for (size_t i = 0u; i < max_idx; i++)
+    {
+        for (size_t j = 0u; j < size; j++)
+        {
+            size_t idx = 0u;
+
+            switch (axis)
+            {
+            case AXIS_0:
+            {
+                idx = matrixIndex(matrix->num_cols, i, j);
+                break;
+            }
+            case AXIS_1:
+            {
+                idx = matrixIndex(matrix->num_cols, j, i);
+                break;
+            }
+            default:
+                break;
+            }
+
+            result->data[j] += matrix->data[idx];
+        }
     }
+
+    for (size_t j = 0u; j < size; j++)
+    {
+        result->data[j] /= max_idx;
+    }
+
+    return result;
 }

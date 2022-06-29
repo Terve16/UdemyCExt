@@ -14,29 +14,31 @@
 
 Matrix *createMatrix(const size_t num_rows, const size_t num_cols, const float value)
 {
+    if (num_rows == 0u || num_cols == 0u)
+        return NULL;
+
     Matrix *matrix = (Matrix *)malloc(sizeof(Matrix));
 
     if (matrix == NULL)
-    {
         return NULL;
-    }
 
-    float *data = (float *)malloc(num_rows * num_cols * sizeof(float));
+    size_t array_size = (num_cols * num_rows);
 
-    if (data == NULL)
+    matrix->data = (float *)malloc(array_size * sizeof(float));
+
+    if (matrix->data == NULL)
     {
         free(matrix);
         return NULL;
     }
 
-    for (size_t i = 0; i < num_cols * num_rows; i++)
-    {
-        data[i] = value;
-    }
-
-    matrix->data = data;
     matrix->num_cols = num_cols;
     matrix->num_rows = num_rows;
+
+    for (size_t i = 0u; i < array_size; i++)
+    {
+        matrix->data[i] = value;
+    }
 
     return matrix;
 }
@@ -44,9 +46,7 @@ Matrix *createMatrix(const size_t num_rows, const size_t num_cols, const float v
 Matrix *freeMatrix(Matrix *matrix)
 {
     if (matrix == NULL)
-    {
         return NULL;
-    }
 
     if (matrix->data != NULL)
     {
@@ -55,7 +55,6 @@ Matrix *freeMatrix(Matrix *matrix)
     }
 
     free(matrix);
-
     return NULL;
 }
 
@@ -65,17 +64,26 @@ Matrix *freeMatrix(Matrix *matrix)
 
 size_t matrixIndex(const size_t num_cols, const size_t i, const size_t j)
 {
-    return i * num_cols + j;
+    if (num_cols == 0u)
+        return 0u;
+
+    return ((i * num_cols) + j);
 }
 
 size_t matrixNumElements(const Matrix *matrix)
 {
-    return matrix->num_cols * matrix->num_rows;
+    if (matrix == NULL || matrix->data == NULL)
+        return 0u;
+
+    return (matrix->num_cols * matrix->num_rows);
 }
 
 bool matrixSameSize(const Matrix *matrix1, const Matrix *matrix2)
 {
-    return ((matrix1->num_rows == matrix2->num_rows) && (matrix1->num_cols == matrix2->num_cols));
+    if (matrix1 == NULL || matrix1->data == NULL || matrix2 == NULL || matrix2->data == NULL)
+        return false;
+
+    return (matrixNumElements(matrix1) == matrixNumElements(matrix2));
 }
 
 /**********************/
@@ -84,37 +92,35 @@ bool matrixSameSize(const Matrix *matrix1, const Matrix *matrix2)
 
 void printMatrix(const Matrix *matrix)
 {
-    printf("[");
+    if (matrix == NULL || matrix->data == NULL)
+        return;
 
-    for (size_t i = 0; i < matrix->num_rows; i++)
+    printf("\n\n[");
+
+    for (size_t i = 0u; i < matrix->num_rows; i++)
     {
-        if (i == 0)
-        {
-            printf("[");
-        }
-        else
-        {
-            printf(" [");
-        }
 
-        for (size_t j = 0; j < matrix->num_cols - 1; j++)
-        {
-            const size_t idx = matrixIndex(matrix->num_cols, i, j);
+        printf("[");
 
-            printf("%f, ", matrix->data[idx]);
-        }
-
-        const size_t idx = matrixIndex(matrix->num_cols, i, matrix->num_cols - 1);
-
-        if (i < (matrix->num_rows - 1))
+        for (size_t j = 0u; j < matrix->num_cols; j++)
         {
-            printf("%f]\n", matrix->data[idx]);
-        }
-        else
-        {
+            size_t idx = matrixIndex(matrix->num_cols, i, j);
+
             printf("%f", matrix->data[idx]);
+
+            if (j < (matrix->num_cols - 1u))
+            {
+                printf(", ");
+            }
+        }
+
+        printf("]");
+
+        if (i < (matrix->num_rows - 1u))
+        {
+            printf("\n");
         }
     }
 
-    printf("]]\n\n");
+    printf("]\n");
 }

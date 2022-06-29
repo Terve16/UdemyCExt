@@ -27,38 +27,38 @@ void preload_ego_vehicle_data(const char datapath[128])
     EGO_VEHICLE_DATA.id = EGO_VEHICLE_ID;
     EGO_VEHICLE_DATA.distance_m = 0.0f;
 
-    fscanf(file_pointer, "Lane: %d\n", &(EGO_VEHICLE_DATA.lane));
-    fscanf(file_pointer, "Speed: %f\n", &(EGO_VEHICLE_DATA.speed_mps));
+    uint32_t lane_temp;
+    float speed_temp;
 
-    /*
-    // obtain file size:
-    fseek(file_pointer, 0, SEEK_END);
-    size_t lSize = ftell(file_pointer);
-    rewind(file_pointer);
+    fscanf(file_pointer, "Lane: %d\n", &lane_temp);
+    fscanf(file_pointer, "Speed: %f\n", &speed_temp);
 
-    // allocate memory to contain the whole file:
-    char *buffer = (char *)malloc(sizeof(char) * lSize);
-    if (buffer == NULL)
+    switch (lane_temp)
     {
-        fclose(file_pointer);
-        return;
-    }
-
-    // copy the file into the buffer:
-    size_t result = fread(buffer, 1, lSize, file_pointer);
-    if (result != lSize)
+    case LANE_ASSOCIATION_TYPE_RIGHT:
     {
-        fclose(file_pointer);
-        free(buffer);
-        return;
+        EGO_VEHICLE_DATA.lane = LANE_ASSOCIATION_TYPE_RIGHT;
+        break;
     }
+    case LANE_ASSOCIATION_TYPE_CENTER:
+    {
+        EGO_VEHICLE_DATA.lane = LANE_ASSOCIATION_TYPE_CENTER;
+        break;
+    }
+    case LANE_ASSOCIATION_TYPE_LEFT:
+    {
+        EGO_VEHICLE_DATA.lane = LANE_ASSOCIATION_TYPE_LEFT;
+        break;
+    }
+    case LANE_ASSOCIATION_TYPE_NONE:
+    default:
+    {
+        EGO_VEHICLE_DATA.lane = LANE_ASSOCIATION_TYPE_NONE;
+        break;
+    }
+    }
+    EGO_VEHICLE_DATA.speed_mps = speed_temp;
 
-    // the whole file is now loaded in the memory buffer.
-
-    // terminate
-    free(buffer);
-
-*/
     fclose(file_pointer);
 }
 
@@ -71,7 +71,7 @@ void preload_vehicle_data(const char datapath[128])
         strncat(file_path, "vehicle_", 20);
 
         char temp[5] = {'\0'};
-        sprintf(temp, "%d", i);
+        sprintf(temp, "%d", i); // snprintf
 
         strncat(file_path, temp, 20);
         strncat(file_path, "_data.txt", 20);
@@ -81,16 +81,51 @@ void preload_vehicle_data(const char datapath[128])
         if (file_pointer == NULL)
             continue;
 
-        VEHICLE_DATA[i][0].id = i;
+        uint32_t lane_temp;
+        LaneAssociationType lane_temp2;
+        float distance_temp;
+        float speed_temp;
 
-        fscanf(file_pointer, "Lane: %d\n", &(VEHICLE_DATA[i][0].lane));
-        fscanf(file_pointer, "Distance: %f\n", &(VEHICLE_DATA[i][0].distance_m));
+        fscanf(file_pointer, "Lane: %d\n", &lane_temp);
+        fscanf(file_pointer, "Distance: %f\n", &distance_temp);
+
+        switch (lane_temp)
+        {
+        case LANE_ASSOCIATION_TYPE_RIGHT:
+        {
+            lane_temp2 = LANE_ASSOCIATION_TYPE_RIGHT;
+            break;
+        }
+        case LANE_ASSOCIATION_TYPE_CENTER:
+        {
+            lane_temp2 = LANE_ASSOCIATION_TYPE_CENTER;
+            break;
+        }
+        case LANE_ASSOCIATION_TYPE_LEFT:
+        {
+            lane_temp2 = LANE_ASSOCIATION_TYPE_LEFT;
+            break;
+        }
+        case LANE_ASSOCIATION_TYPE_NONE:
+        default:
+        {
+            lane_temp2 = LANE_ASSOCIATION_TYPE_NONE;
+            break;
+        }
+        }
 
         for (size_t j = 0; j < NUM_CYCLES; j++)
         {
             int32_t temp = 0u;
-            fscanf(file_pointer, "Speed %d: %f\n", &temp, &(VEHICLE_DATA[i][j].speed_mps));
+
+            fscanf(file_pointer, "Speed %d: %f\n", &temp, &speed_temp);
+
             assert(j == temp);
+
+            VEHICLE_DATA[i][j].id = i;
+            VEHICLE_DATA[i][j].lane = lane_temp2;
+            VEHICLE_DATA[i][j].speed_mps = speed_temp;
+            VEHICLE_DATA[i][j].distance_m = distance_temp;
         }
 
         fclose(file_pointer);

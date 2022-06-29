@@ -1,0 +1,54 @@
+#ifndef VECTOR_H
+#define VECTOR_H
+
+#include <stdarg.h>
+#include <stdlib.h>
+
+/**********************/
+/* DEFINES AND TYPES  */
+/**********************/
+typedef struct Vector
+{
+    float *data;
+    size_t length;
+} Vector;
+
+/**********************/
+/*   MAIN FUNCTIONS   */
+/**********************/
+
+Vector *createVector(const size_t length, const float value);
+
+Vector *freeVector(Vector *vector);
+
+void setVectorValues(Vector *const vector, const size_t no_of_values, ...);
+
+/**********************/
+/*  I/O FUNCTIONS     */
+/**********************/
+
+void printVector(const Vector *const vector);
+
+/**********************/
+/*  MATH. FUNCTIONS   */
+/**********************/
+
+Vector *addVectors(const Vector *const vec1, const Vector *const vec2);
+
+Vector *subVectors(const Vector *const vec1, const Vector *const vec2);
+
+float multiplyVectors(const Vector *const vec1, const Vector *const vec2);
+
+Vector *multiplyScalar(const Vector *const vec, const float scalar);
+
+Vector *divideScalar(const Vector *const vec, const float scalar);
+
+float meanVector(const Vector *const vector);
+
+float minVector(const Vector *const vector);
+
+float maxVector(const Vector *const vector);
+
+float vectorEuclidNorm(const Vector *const vector);
+
+#endif // VECTOR_H

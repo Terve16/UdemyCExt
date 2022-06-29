@@ -13,14 +13,11 @@
 static VehicleType EGO_VEHICLE_DATA;
 static VehicleType VEHICLE_DATA[NUM_VEHICLES][NUM_CYCLES];
 
-void preload_ego_vehicle_data(const char datapath[128], int use_case_idx)
+void preload_ego_vehicle_data(const char datapath[128])
 {
-    char file_path[256] = {'\0'};
-    char file_name[32] = {'\0'};
-    snprintf(file_name, 32, "/%d/ego_data.txt", use_case_idx);
-
-    strncpy(file_path, datapath, 256);
-    strncat(file_path, file_name, 32);
+    char file_path[128] = {'\0'};
+    strncpy(file_path, datapath, 128);
+    strncat(file_path, "ego_data.txt", 20);
 
     FILE *file_pointer = fopen(file_path, "r");
 
@@ -65,16 +62,19 @@ void preload_ego_vehicle_data(const char datapath[128], int use_case_idx)
     fclose(file_pointer);
 }
 
-void preload_vehicle_data(const char datapath[128], int use_case_idx)
+void preload_vehicle_data(const char datapath[128])
 {
     for (size_t i = 0; i < NUM_VEHICLES; i++)
     {
-        char file_path[256] = {'\0'};
-        char file_name[32] = {'\0'};
-        snprintf(file_name, 32, "/%d/vehicle_%lu_data.txt", use_case_idx, i);
+        char file_path[128] = {'\0'};
+        strncpy(file_path, datapath, 128);
+        strncat(file_path, "vehicle_", 20);
 
-        strncpy(file_path, datapath, 256);
-        strncat(file_path, file_name, 32);
+        char temp[5] = {'\0'};
+        sprintf(temp, "%lu", i); // snprintf
+
+        strncat(file_path, temp, 20);
+        strncat(file_path, "_data.txt", 20);
 
         FILE *file_pointer = fopen(file_path, "r");
 

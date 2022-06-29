@@ -56,6 +56,30 @@ Vector *freeVector(Vector *vector)
     return NULL;
 }
 
+void setVectorValues(Vector *const vector, const size_t no_of_values, ...)
+{
+    if (vector == NULL || vector->data == NULL)
+        return;
+
+    va_list valist;
+
+    va_start(valist, no_of_values);
+
+    for (size_t i = 0u; i < vector->length; i++)
+    {
+        if (i < no_of_values)
+        {
+            vector->data[i] = (float)va_arg(valist, double);
+        }
+        else
+        {
+            vector->data[i] = 0.0f;
+        }
+    }
+
+    va_end(valist);
+}
+
 /**********************/
 /*  I/O FUNCTIONS     */
 /**********************/
@@ -221,17 +245,17 @@ float maxVector(const Vector *vector)
 
 float vectorEuclidNorm(const Vector *vector)
 {
-    if (vector == NULL || vector->data == NULL)
-        return 0.0f;
-
-    float result = 0.0f;
-
-    for (size_t i = 0u; i < vector->length; i++)
+    if (vector == NULL)
     {
-        result += powf(vector->data[i], 2.0f);
+        return 0.0f;
     }
 
-    result = sqrtf(result);
+    float sum = 0.0f;
 
-    return result;
+    for (size_t i = 0; i < vector->length; i++)
+    {
+        sum += powf(vector->data[i], 2.0f);
+    }
+
+    return sqrtf(sum);
 }

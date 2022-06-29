@@ -298,7 +298,7 @@ LaneAssociationType get_lane_change_request(const VehicleType *ego_vehicle, Neig
         {
         case LANE_ASSOCIATION_TYPE_LEFT:
         {
-            if (right_gap[0] > (min_gap_size * 2.0f))
+            if (right_gap[0] > min_gap_size)
             {
                 target_lane = LANE_ASSOCIATION_TYPE_CENTER;
             }
@@ -306,11 +306,11 @@ LaneAssociationType get_lane_change_request(const VehicleType *ego_vehicle, Neig
         }
         case LANE_ASSOCIATION_TYPE_CENTER:
         {
-            if (right_gap[0] > (min_gap_size * 2.0f))
+            if (right_gap[0] > min_gap_size)
             {
                 target_lane = LANE_ASSOCIATION_TYPE_RIGHT;
             }
-            else if (left_gap[0] > (min_gap_size * 2.0f))
+            else if (left_gap[0] > min_gap_size)
             {
                 target_lane = LANE_ASSOCIATION_TYPE_LEFT;
             }
@@ -318,7 +318,7 @@ LaneAssociationType get_lane_change_request(const VehicleType *ego_vehicle, Neig
         }
         case LANE_ASSOCIATION_TYPE_RIGHT:
         {
-            if (left_gap[0] > (min_gap_size * 2.0f))
+            if (left_gap[0] > min_gap_size)
             {
                 target_lane = LANE_ASSOCIATION_TYPE_CENTER;
             }

@@ -1,6 +1,7 @@
 #ifndef VECTOR_H
 #define VECTOR_H
 
+#include <stdarg.h>
 #include <stdlib.h>
 
 /**********************/
@@ -19,6 +20,8 @@ typedef struct Vector
 Vector *createVector(const size_t length, const float value);
 
 Vector *freeVector(Vector *vector);
+
+void setVectorValues(Vector *const vector, const size_t no_of_values, ...);
 
 /**********************/
 /*  I/O FUNCTIONS     */

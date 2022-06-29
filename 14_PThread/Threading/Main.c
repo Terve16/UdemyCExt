@@ -4,7 +4,34 @@
 #include <stdlib.h>
 #include <string.h>
 
-//...
+#define LENGTH (10000u)
+#define NUM_RUNS (10000u)
+
+void serial_sum(float *arr, size_t length)
+{
+    if (arr == NULL)
+        return;
+
+    volatile static double sum = 0u;
+
+    for (size_t i = 0; i < length; i++)
+    {
+        sum += (double)arr[i];
+    }
+}
+
+void parallel_sum(float *arr, size_t length)
+{
+    if (arr == NULL)
+        return;
+
+    volatile static double sum = 0u;
+
+    for (size_t i = 0; i < length; i++)
+    {
+        sum += (double)arr[i];
+    }
+}
 
 int main()
 {

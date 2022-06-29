@@ -17,9 +17,9 @@ int main()
 
     const clock_t time_end = clock();
 
-    printf("ms: %lf\n", get_timing_milliseconds(&time_start, &time_end));
-    printf("us: %lf\n", get_timing_microseconds(&time_start, &time_end));
-    printf("ns: %lf\n", get_timing_nanoseconds(&time_start, &time_end));
+    printf("ms: %.16lf\n", get_timing_milliseconds(&time_start, &time_end));
+    printf("us: %.16lf\n", get_timing_microseconds(&time_start, &time_end));
+    printf("ns: %.16lf\n", get_timing_nanoseconds(&time_start, &time_end));
 
     freeMatrix(m1);
     freeMatrix(m2);

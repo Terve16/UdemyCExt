@@ -1,6 +1,5 @@
 #include <stdbool.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "AdDataLoader.h"
@@ -11,30 +10,13 @@
 
 const char datapath[128] = "D:/Allgemein/Udemy/C_Uebungen/UdemyCExt/11_Files/DataLoader2/data/";
 
-int main(int argc, char *argv[])
+int main()
 {
-    char file_path[128] = {'\0'};
-    strncpy(file_path, datapath, 128);
-
-    if (argc >= 2)
-    {
-        strncpy(file_path, argv[1], 128);
-    }
-
-    int use_case_idx = 0;
-
-    if (argc >= 3)
-    {
-        use_case_idx = atoi(argv[2]);
-    }
-
-    printf("\nPath: %s\nIndex: %d\n\n", file_path, use_case_idx);
-
     VehicleType ego_vehicle;
     NeighborVehiclesType vehicles;
 
-    preload_ego_vehicle_data(file_path, use_case_idx);
-    preload_vehicle_data(file_path, use_case_idx);
+    preload_ego_vehicle_data(datapath);
+    preload_vehicle_data(datapath);
 
     init_ego_vehicle(&ego_vehicle);
     init_vehicles(&vehicles);
